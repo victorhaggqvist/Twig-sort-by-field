@@ -31,7 +31,7 @@ $base = array(
 
     {{ item.name }}
 
-{% %}
+{% endfor %}
 ```
 
 # License
