@@ -1,0 +1,20 @@
+{
+    "name": "snilius/twig-sort-by-field",
+    "description": "A Twig Extension filter to sort an array of entries (objects or arrays) by the specified field's value",
+    "require-dev": {
+        "phpunit/phpunit": "~4.5",
+        "twig/extensions": "~1.2"
+    },
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Victor Häggqvist",
+            "email": "victor@snilius.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Snilius\\Twig\\": "src/"
+        }
+    }
+}
