@@ -10,7 +10,7 @@ use Exception;
  *
  * The base of the filter is borrowed from https://github.com/dannynimmo/craftcms-sortbyfield
  *
- * I hav extended it to also sort array structures
+ * I have extended it to also sort array structures
  */
 
 class SortByFieldExtension extends \Twig_Extension {
