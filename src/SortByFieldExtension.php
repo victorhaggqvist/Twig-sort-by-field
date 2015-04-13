@@ -24,9 +24,9 @@ class SortByFieldExtension extends \Twig_Extension
 
     public function getFilters()
     {
-        return array(
-            new \Twig_SimpleFilter('sortbyfield', array($this, 'sortByFieldFilter'))
-        );
+        return [
+            new \Twig_SimpleFilter('sortbyfield', [$this, 'sortByFieldFilter'])
+        ];
     }
 
     /**
@@ -36,11 +36,11 @@ class SortByFieldExtension extends \Twig_Extension
      */
     public function sortByFieldFilter($content, $sort_by = null, $direction = 'asc')
     {
-        if (!is_array($content)) {
+        if (! is_array($content)) {
             throw new \InvalidArgumentException('Variable passed to the sortByField filter is not an array');
-        } elseif ($sort_by === null) {
+        } elseif (null === $sort_by) {
             throw new Exception('No sort by parameter passed to the sortByField filter');
-        } elseif (!self::isSortable($content[0], $sort_by)) {
+        } elseif (! self::isSortable($content[0], $sort_by)) {
             throw new Exception('Entries passed to the sortByField filter do not have the field "' . $sort_by . '"');
         } else {
             // Unfortunately have to suppress warnings here due to __get function

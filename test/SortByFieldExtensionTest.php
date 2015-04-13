@@ -23,76 +23,32 @@ class SortByFieldExtensionTest extends \PHPUnit_Framework_TestCase
         $twig->render('foo');
     }
 
-    public function testSortArray()
+    /**
+     * @dataProvider getHeadersName
+     */
+    public function testSortArray($headerName)
     {
-        $base = array(
-        array(
-        "name" => "Redmine",
-        "desc" => "Issues Tracker",
-        "url"  => "http://www.redmine.org/",
-        "oss"  => "GPL",
-        "cost" => 0
-        ),
-        array(
-        "name" => "GitLab",
-        "desc" => "Version Control",
-        "url"  => "https://about.gitlab.com/",
-        "oss"  => "GPL",
-        "cost" => 1,
-        ),
-        array(
-        "name" => "Jenkins",
-        "desc" => "Continous Integration",
-        "url"  => "http://jenkins-ci.org/",
-        "oss"  => "MIT",
-        "cost" => 0,
-        ),
-        array(
-        "name" => "Piwik",
-        "desc" => "Web Analytics",
-        "url"  => "http://piwik.org/",
-        "oss"  => "GPL",
-        "cost" => 1
-        )
-        );
-
-        $fact = array('GitLab','Jenkins','Piwik','Redmine');
+        $base = $this->getArraySample();
 
         $filter = new SortByFieldExtension();
         $sorted = $filter->sortByFieldFilter($base, 'name');
 
-        for ($i = 0; $i < count($fact); $i++) {
-            $this->assertEquals($fact[$i], $sorted[$i]['name']);
-        }
+        $item = array_shift($sorted);
+        $this->assertEquals($headerName, $item['name']);
     }
 
-    public function testSortObjects()
+    /**
+     * @dataProvider getHeadersName
+     */
+    public function testSortObjects($headerName)
     {
-        $base = array();
-        $ob1 = new Foo();
-        $ob1->name = "Redmine";
-        $base[]=$ob1;
-
-        $ob2 = new Foo();
-        $ob2->name = "GitLab";
-        $base[]=$ob2;
-
-        $ob3 = new Foo();
-        $ob3->name = "Jenkins";
-        $base[]=$ob3;
-
-        $ob4 = new Foo();
-        $ob4->name = "Jenkins";
-        $base[]=$ob4;
-
-        $fact = array('GitLab','Jenkins','Jenkins','Redmine');
+        $base = $this->getObjectSample();
 
         $filter = new SortByFieldExtension();
         $sorted = $filter->sortByFieldFilter($base, 'name');
 
-        for ($i = 0; $i < count($fact); $i++) {
-            $this->assertEquals($fact[$i], $sorted[$i]->name);
-        }
+        $item = array_shift($sorted);
+        $this->assertEquals($headerName, $item->name);
     }
 
     public function testNonArrayBase()
@@ -114,5 +70,69 @@ class SortByFieldExtensionTest extends \PHPUnit_Framework_TestCase
         $filter = new SortByFieldExtension();
         $this->setExpectedException('Exception');
         $filter->sortByFieldFilter(array(new Foo()), 'bar');
+    }
+
+    private function getArraySample()
+    {
+        return [
+            [
+                "name" => "Redmine",
+                "desc" => "Issues Tracker",
+                "url"  => "http://www.redmine.org/",
+                "oss"  => "GPL",
+                "cost" => 0
+            ],
+            [
+                "name" => "GitLab",
+                "desc" => "Version Control",
+                "url"  => "https://about.gitlab.com/",
+                "oss"  => "GPL",
+                "cost" => 1,
+            ],
+            [
+                "name" => "Jenkins",
+                "desc" => "Continous Integration",
+                "url"  => "http://jenkins-ci.org/",
+                "oss"  => "MIT",
+                "cost" => 0,
+            ],
+            [
+                "name" => "Piwik",
+                "desc" => "Web Analytics",
+                "url"  => "http://piwik.org/",
+                "oss"  => "GPL",
+                "cost" => 1
+            ]
+        ];
+    }
+
+    public function getHeadersName()
+    {
+        return [
+                ['GitLab','Jenkins','Jenkins','Redmine']
+            ];
+    }
+
+    private function getObjectSample()
+    {
+        $base = [];
+
+        $ob1 = new Foo();
+        $ob1->name = "Redmine";
+        array_push($base, $ob1);
+
+        $ob2 = new Foo();
+        $ob2->name = "GitLab";
+        array_push($base, $ob2);
+
+        $ob3 = new Foo();
+        $ob3->name = "Jenkins";
+        array_push($base, $ob3);
+
+        $ob4 = new Foo();
+        $ob4->name = "Jenkins";
+        array_push($base, $ob4);
+
+        return $base;
     }
 }
