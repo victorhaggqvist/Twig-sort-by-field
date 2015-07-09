@@ -5,6 +5,9 @@
  * Time: 12:58 PM
  */
 
-class Foo {
-  public $name;
+namespace Snilius\Twig\Tests;
+
+class Foo
+{
+    public $name;
 }
