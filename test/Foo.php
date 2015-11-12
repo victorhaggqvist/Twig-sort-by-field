@@ -7,4 +7,17 @@
 
 class Foo {
   public $name;
+  private $attrs = array();
+
+  public function __isset($name) {
+    return isset($this->attrs[$name]);
+  }
+
+  public function __get($name) {
+    return $this->attrs[$name];
+  }
+
+  public function __set($name, $value) {
+    $this->attrs[$name] = $value;
+  }
 }

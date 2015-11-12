@@ -89,6 +89,34 @@ class SortByFieldExtensionTest extends PHPUnit_Framework_TestCase {
     }
   }
 
+  public function testSortObjectsMagicProperty() {
+    $base = array();
+    $ob1 = new Foo();
+    $ob1->magicName = "Redmine";
+    $base[]=$ob1;
+
+    $ob2 = new Foo();
+    $ob2->magicName = "GitLab";
+    $base[]=$ob2;
+
+    $ob3 = new Foo();
+    $ob3->magicName = "Jenkins";
+    $base[]=$ob3;
+
+    $ob4 = new Foo();
+    $ob4->magicName = "Jenkins";
+    $base[]=$ob4;
+
+    $fact = array('GitLab','Jenkins','Jenkins','Redmine');
+
+    $filter = new SortByFieldExtension();
+    $sorted = $filter->sortByFieldFilter($base,'magicName');
+
+    for ($i = 0; $i < count($fact); $i++){
+      $this->assertEquals($fact[$i], $sorted[$i]->magicName);
+    }
+  }
+
   public function testNonArrayBase() {
     $filter = new SortByFieldExtension();
     $this->setExpectedException('InvalidArgumentException');
