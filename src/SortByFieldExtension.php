@@ -34,7 +34,7 @@ class SortByFieldExtension extends \Twig_Extension {
       throw new \InvalidArgumentException('Variable passed to the sortByField filter is not an array');
     } elseif ($sort_by === null) {
       throw new Exception('No sort by parameter passed to the sortByField filter');
-    } elseif (!self::isSortable($content[0], $sort_by)) {
+    } elseif (!self::isSortable(current($content), $sort_by)) {
       throw new Exception('Entries passed to the sortByField filter do not have the field "' . $sort_by . '"');
     } else {
       // Unfortunately have to suppress warnings here due to __get function
