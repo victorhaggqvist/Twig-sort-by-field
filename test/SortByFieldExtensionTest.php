@@ -61,6 +61,48 @@ class SortByFieldExtensionTest extends PHPUnit_Framework_TestCase {
     }
   }
 
+  public function testSortArrayWithKeys() {
+    $base = array(
+        "a" => array(
+            "name" => "Redmine",
+            "desc" => "Issues Tracker",
+            "url"  => "http://www.redmine.org/",
+            "oss"  => "GPL",
+            "cost" => 0
+        ),
+        "b" => array(
+            "name" => "GitLab",
+            "desc" => "Version Control",
+            "url"  => "https://about.gitlab.com/",
+            "oss"  => "GPL",
+            "cost" => 1,
+        ),
+        "c" => array(
+            "name" => "Jenkins",
+            "desc" => "Continous Integration",
+            "url"  => "http://jenkins-ci.org/",
+            "oss"  => "MIT",
+            "cost" => 0,
+        ),
+        "d" => array(
+            "name" => "Piwik",
+            "desc" => "Web Analytics",
+            "url"  => "http://piwik.org/",
+            "oss"  => "GPL",
+            "cost" => 1
+        )
+    );
+
+    $fact = array('GitLab','Jenkins','Piwik','Redmine');
+
+    $filter = new SortByFieldExtension();
+    $sorted = $filter->sortByFieldFilter($base,'name');
+
+    for ($i = 0; $i < count($fact); $i++){
+      $this->assertEquals($fact[$i], $sorted[$i]['name']);
+    }
+  }
+
   public function testSortObjects() {
     $base = array();
     $ob1 = new Foo();
