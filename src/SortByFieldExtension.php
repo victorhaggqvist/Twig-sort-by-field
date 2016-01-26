@@ -31,8 +31,15 @@ class SortByFieldExtension extends \Twig_Extension {
      * Usage: {% for entry in master.entries|sortbyfield('ordering', 'desc') %}
      */
     public function sortByFieldFilter($content, $sort_by = null, $direction = 'asc') {
+
+        if (is_a($content, 'Doctrine\Common\Collections\Collection')) {
+            $content = $content->toArray();
+        }
+
         if (!is_array($content)) {
             throw new \InvalidArgumentException('Variable passed to the sortByField filter is not an array');
+        } elseif (count($content) < 1) {
+            return $content;
         } elseif ($sort_by === null) {
             throw new Exception('No sort by parameter passed to the sortByField filter');
         } elseif (!self::isSortable(current($content), $sort_by)) {
