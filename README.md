@@ -1,14 +1,14 @@
 # Twig SortByField Extension [![](https://img.shields.io/travis/victorhaggqvist/Twig-sort-by-field.svg?style=flat)](https://travis-ci.org/victorhaggqvist/Twig-sort-by-field)
 A Twig Extension filter to sort an array of entries (objects or arrays) by an entry field.
 
-# Install
+## Install
 With composer
 
     composer require snilius/twig-sort-by-field
 
-# Sample
-The list could look like this, but obviously with more than one key per array
-.
+## Sample
+The list could look like this, but obviously with more than one key per array.
+
 ```php
 $base = array(
   array(
@@ -34,7 +34,8 @@ $base = array(
 {% endfor %}
 ```
 
-# License
+## License
+
     Copyright 2015 Victor Häggqvist
 
     Licensed under the Apache License, Version 2.0 (the "License");
