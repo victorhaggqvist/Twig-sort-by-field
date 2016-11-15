@@ -58,12 +58,16 @@ class SortByFieldExtension extends \Twig_Extension {
                 else
                     $a_sort_value = $a->$sort_by;
 
+                $a_sort_value = self::getScalarValue($a_sort_value);
+
                 if (is_array($b))
                     $b_sort_value = $b[$sort_by];
                 else if (method_exists($b, 'get' . ucfirst($sort_by)))
                     $b_sort_value = $b->{'get' . ucfirst($sort_by)}();
                 else
                     $b_sort_value = $b->$sort_by;
+
+                $b_sort_value = self::getScalarValue($b_sort_value);
 
                 if ($a_sort_value == $b_sort_value) {
                     return 0;
@@ -91,4 +95,22 @@ class SortByFieldExtension extends \Twig_Extension {
         else
             return false;
     }
+
+    /**
+     * If "sort by" property is an object, get its string value.
+     *
+     * @param $sort_value
+     * @return mixed
+     */
+    private static function getScalarValue($sort_value)
+    {
+        if(!is_object($sort_value))
+            return $sort_value;
+
+        if(method_exists($sort_value, '__toString'))
+            return $sort_value->__toString();
+
+        else throw new \UnexpectedValueException("Object cannot be converted to string");
+    }
 }
+
