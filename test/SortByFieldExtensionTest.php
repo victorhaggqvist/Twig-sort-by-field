@@ -212,13 +212,13 @@ class SortByFieldExtensionTest extends PHPUnit_Framework_TestCase {
 
     public function testSortObjectObjectProperty()
     {
-        /* @var Foo[] */
+        /* @var Foo[] $base*/
         $base = [];
 
-        $base[] = new Foo('Position 4',new Foo('Redmine'));
-        $base[] = new Foo('Position 2',new Foo('Jenkins'));
-        $base[] = new Foo('Position 1',new Foo('GitLab'));
-        $base[] = new Foo('Position 3',new Foo('Jenkins'));
+        $base[] = new Foo('2',new Foo('Redmine'));
+        $base[] = new Foo('4',new Foo('Jenkins'));
+        $base[] = new Foo('3',new Foo('GitLab'));
+        $base[] = new Foo('1',new Foo('Jenkins'));
 
         $fact = array('GitLab', 'Jenkins', 'Jenkins', 'Redmine');
 
@@ -234,22 +234,73 @@ class SortByFieldExtensionTest extends PHPUnit_Framework_TestCase {
 
     public function testSortObjectObjectObjectProperty()
     {
-        /* @var Foo[] */
+        /* @var Foo[] $base */
         $base = [];
 
-        $base[] = new Foo('4',new Foo('4-4',new Foo('Redmine')));
-        $base[] = new Foo('2',new Foo('2-2',new Foo('Jenkins')));
-        $base[] = new Foo('1',new Foo('1-1',new Foo('GitLab')));
-        $base[] = new Foo('3',new Foo('3-3',new Foo('Jenkins')));
+        $base[] = new Foo('3',new Foo('3-3',new Foo('Redmine')));
+        $base[] = new Foo('4',new Foo('4-4',new Foo('Jenkins')));
+        $base[] = new Foo('2',new Foo('2-2',new Foo('GitLab')));
+        $base[] = new Foo('1',new Foo('1-1',new Foo('Jenkins')));
 
         $fact = array('GitLab', 'Jenkins', 'Jenkins', 'Redmine');
 
         $filter = new SortByFieldExtension();
         /* @var Foo[] $sorted */
-        $sorted = $filter->sortByFieldFilter($base, 'object.name');
+        $sorted = $filter->sortByFieldFilter($base, 'object.object.name');
 
         for ($i = 0; $i < count($fact); $i++) {
             $this->assertEquals($fact[$i], $sorted[$i]->getObject()->getObject()->name);
         }
+    }
+
+    public function testUnknownFieldSortObjectObjectProperty()
+    {
+        /* @var Foo[] $base */
+        $base = [];
+
+        $base[] = new Foo('2',new Foo('Redmine'));
+        $base[] = new Foo('4',new Foo('Jenkins'));
+        $base[] = new Foo('3',new Foo('GitLab'));
+        $base[] = new Foo('1',new Foo('Jenkins'));
+
+        $filter = new SortByFieldExtension();
+        $this->setExpectedException('Exception');
+        $filter->sortByFieldFilter($base, 'object.unknownField');
+    }
+
+
+    public function testSortArrayArrayArrayProperty()
+    {
+        /* @var array $base */
+        $base = [
+            ['param' => ['value' => 'Redmine']],
+            ['param' => ['value' => 'Jenkins']],
+            ['param' => ['value' => 'GitLab']],
+            ['param' => ['value' => 'Jenkins']],
+        ];
+
+        $fact = array('GitLab', 'Jenkins', 'Jenkins', 'Redmine');
+
+        $filter = new SortByFieldExtension();
+        $sorted = $filter->sortByFieldFilter($base, 'param.value');
+
+        for ($i = 0; $i < count($fact); $i++) {
+            $this->assertEquals($fact[$i], $sorted[$i]['param']['value']);
+        }
+    }
+
+    public function testUnknownKeySortArrayArrayArrayProperty()
+    {
+        /* @var array $base */
+        $base = [
+            ['param' => ['value' => 'Redmine']],
+            ['param' => ['value' => 'Jenkins']],
+            ['param' => ['value' => 'GitLab']],
+            ['param' => ['value' => 'Jenkins']],
+        ];
+
+        $filter = new SortByFieldExtension();
+        $this->setExpectedException('Exception');
+        $filter->sortByFieldFilter($base, 'param.UnknownKey');
     }
 }

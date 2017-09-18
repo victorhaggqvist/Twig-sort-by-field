@@ -51,30 +51,33 @@ class SortByFieldExtension extends \Twig_Extension {
             @usort($content, function ($a, $b) use ($sort_by, $direction) {
                 $flip = ($direction === 'desc') ? -1 : 1;
 
+                $sorted_a = $a;
+                $sorted_b = $b;
+
                 foreach (explode('.', $sort_by) as $sort_by) {
 
-                    if (is_array($a)) {
-                        $a_sort_value = $a[$sort_by];
+                    if (is_array($sorted_a)) {
+                        $a_sort_value = $sorted_a[$sort_by];
                     } else {
-                        if (method_exists($a, 'get'.ucfirst($sort_by))) {
-                            $a_sort_value = $a->{'get'.ucfirst($sort_by)}();
+                        if (method_exists($sorted_a, 'get'.ucfirst($sort_by))) {
+                            $a_sort_value = $sorted_a->{'get'.ucfirst($sort_by)}();
                         } else {
-                            $a_sort_value = $a->$sort_by;
+                            $a_sort_value = $sorted_a->$sort_by;
                         }
                     }
 
                     if (is_array($b)) {
-                        $b_sort_value = $b[$sort_by];
+                        $b_sort_value = $sorted_b[$sort_by];
                     } else {
-                        if (method_exists($b, 'get'.ucfirst($sort_by))) {
-                            $b_sort_value = $b->{'get'.ucfirst($sort_by)}();
+                        if (method_exists($sorted_b, 'get'.ucfirst($sort_by))) {
+                            $b_sort_value = $sorted_b->{'get'.ucfirst($sort_by)}();
                         } else {
-                            $b_sort_value = $b->$sort_by;
+                            $b_sort_value = $sorted_b->$sort_by;
                         }
                     }
 
-                    $a = $a_sort_value;
-                    $b = $b_sort_value;
+                    $sorted_a = $a_sort_value;
+                    $sorted_b = $b_sort_value;
                 }
 
                 if ($a_sort_value == $b_sort_value) {
@@ -97,26 +100,23 @@ class SortByFieldExtension extends \Twig_Extension {
      */
     private static function isSortable($item, $field) {
 
-        $isSortable = false;
+        $is_sortable = false;
+        $sorted_item = $item;
 
         foreach (explode('.', $field) as $field) {
-            if (is_array($item)) {
-                $isSortable = array_key_exists($field, $item);
-                if ($isSortable) {
-                    $item = $item[$field];
+            if (is_array($sorted_item)) {
+                $is_sortable = array_key_exists($field, $sorted_item);
+                if ($is_sortable) {
+                    $sorted_item = $sorted_item[$field];
                 }
             } elseif (is_object($item)) {
-                $isSortable = isset($item->$field) ||
-                    method_exists($item, 'get'.ucfirst($field));
-                if ($isSortable) {
-                    $item = isset($item->$field)
-                        ? $item->$field
-                        : (method_exists($item, 'get'.ucfirst($field))
-                            ? $item->{'get'.ucfirst($field)}() : $item);
+                $is_sortable = isset($sorted_item->$field) || method_exists($sorted_item, 'get'.ucfirst($field));
+                if ($is_sortable) {
+                    $sorted_item = isset($sorted_item->$field) ? $sorted_item->$field : (method_exists($sorted_item, 'get'.ucfirst($field)) ? $sorted_item->{'get'.ucfirst($field)}() : $sorted_item);
                 }
             }
         }
 
-        return $isSortable;
+        return $is_sortable;
     }
 }
