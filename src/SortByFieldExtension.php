@@ -51,19 +51,31 @@ class SortByFieldExtension extends \Twig_Extension {
             @usort($content, function ($a, $b) use ($sort_by, $direction) {
                 $flip = ($direction === 'desc') ? -1 : 1;
 
-                if (is_array($a))
-                    $a_sort_value = $a[$sort_by];
-                else if (method_exists($a, 'get' . ucfirst($sort_by)))
-                    $a_sort_value = $a->{'get' . ucfirst($sort_by)}();
-                else
-                    $a_sort_value = $a->$sort_by;
+                foreach (explode('.', $sort_by) as $sort_by) {
 
-                if (is_array($b))
-                    $b_sort_value = $b[$sort_by];
-                else if (method_exists($b, 'get' . ucfirst($sort_by)))
-                    $b_sort_value = $b->{'get' . ucfirst($sort_by)}();
-                else
-                    $b_sort_value = $b->$sort_by;
+                    if (is_array($a)) {
+                        $a_sort_value = $a[$sort_by];
+                    } else {
+                        if (method_exists($a, 'get'.ucfirst($sort_by))) {
+                            $a_sort_value = $a->{'get'.ucfirst($sort_by)}();
+                        } else {
+                            $a_sort_value = $a->$sort_by;
+                        }
+                    }
+
+                    if (is_array($b)) {
+                        $b_sort_value = $b[$sort_by];
+                    } else {
+                        if (method_exists($b, 'get'.ucfirst($sort_by))) {
+                            $b_sort_value = $b->{'get'.ucfirst($sort_by)}();
+                        } else {
+                            $b_sort_value = $b->$sort_by;
+                        }
+                    }
+
+                    $a = $a_sort_value;
+                    $b = $b_sort_value;
+                }
 
                 if ($a_sort_value == $b_sort_value) {
                     return 0;
@@ -84,11 +96,27 @@ class SortByFieldExtension extends \Twig_Extension {
      * @return bool If collection item can be sorted
      */
     private static function isSortable($item, $field) {
-        if (is_array($item))
-            return array_key_exists($field, $item);
-        elseif (is_object($item))
-            return isset($item->$field) || property_exists($item, $field);
-        else
-            return false;
+
+        $isSortable = false;
+
+        foreach (explode('.', $field) as $field) {
+            if (is_array($item)) {
+                $isSortable = array_key_exists($field, $item);
+                if ($isSortable) {
+                    $item = $item[$field];
+                }
+            } elseif (is_object($item)) {
+                $isSortable = isset($item->$field) ||
+                    method_exists($item, 'get'.ucfirst($field));
+                if ($isSortable) {
+                    $item = isset($item->$field)
+                        ? $item->$field
+                        : (method_exists($item, 'get'.ucfirst($field))
+                            ? $item->{'get'.ucfirst($field)}() : $item);
+                }
+            }
+        }
+
+        return $isSortable;
     }
 }

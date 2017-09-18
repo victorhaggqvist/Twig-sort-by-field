@@ -210,4 +210,46 @@ class SortByFieldExtensionTest extends PHPUnit_Framework_TestCase {
         $filter->sortByFieldFilter(array(new Foo()), 'bar');
     }
 
+    public function testSortObjectObjectProperty()
+    {
+        /* @var Foo[] */
+        $base = [];
+
+        $base[] = new Foo('Position 4',new Foo('Redmine'));
+        $base[] = new Foo('Position 2',new Foo('Jenkins'));
+        $base[] = new Foo('Position 1',new Foo('GitLab'));
+        $base[] = new Foo('Position 3',new Foo('Jenkins'));
+
+        $fact = array('GitLab', 'Jenkins', 'Jenkins', 'Redmine');
+
+        $filter = new SortByFieldExtension();
+        /* @var Foo[] $sorted */
+        $sorted = $filter->sortByFieldFilter($base, 'object.name');
+
+        for ($i = 0; $i < count($fact); $i++) {
+            $this->assertEquals($fact[$i], $sorted[$i]->getObject()->name);
+        }
+
+    }
+
+    public function testSortObjectObjectObjectProperty()
+    {
+        /* @var Foo[] */
+        $base = [];
+
+        $base[] = new Foo('4',new Foo('4-4',new Foo('Redmine')));
+        $base[] = new Foo('2',new Foo('2-2',new Foo('Jenkins')));
+        $base[] = new Foo('1',new Foo('1-1',new Foo('GitLab')));
+        $base[] = new Foo('3',new Foo('3-3',new Foo('Jenkins')));
+
+        $fact = array('GitLab', 'Jenkins', 'Jenkins', 'Redmine');
+
+        $filter = new SortByFieldExtension();
+        /* @var Foo[] $sorted */
+        $sorted = $filter->sortByFieldFilter($base, 'object.name');
+
+        for ($i = 0; $i < count($fact); $i++) {
+            $this->assertEquals($fact[$i], $sorted[$i]->getObject()->getObject()->name);
+        }
+    }
 }
