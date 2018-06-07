@@ -36,6 +36,10 @@ class SortByFieldExtension extends \Twig_Extension {
             $content = $content->toArray();
         }
 
+        if (!is_array($content) && $content instanceof \Traversable) {
+            $content = iterator_to_array($content);
+        }
+
         if (!is_array($content)) {
             throw new \InvalidArgumentException('Variable passed to the sortByField filter is not an array');
         } elseif (count($content) < 1) {
@@ -87,7 +91,7 @@ class SortByFieldExtension extends \Twig_Extension {
         if (is_array($item))
             return array_key_exists($field, $item);
         elseif (is_object($item))
-            return isset($item->$field) || property_exists($item, $field);
+            return isset($item->$field) || property_exists($item, $field) || method_exists($item, 'get'. ucfirst($field));
         else
             return false;
     }
