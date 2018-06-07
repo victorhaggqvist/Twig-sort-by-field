@@ -36,7 +36,7 @@ class SortByFieldExtension extends \Twig_Extension {
             $content = $content->toArray();
         }
 
-        if (!is_array($content) && is_iterable($content)) {
+        if (!is_array($content) && $content instanceof \Traversable) {
             $content = iterator_to_array($content);
         }
 
