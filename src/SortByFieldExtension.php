@@ -91,7 +91,7 @@ class SortByFieldExtension extends \Twig_Extension {
         if (is_array($item))
             return array_key_exists($field, $item);
         elseif (is_object($item))
-            return isset($item->$field) || property_exists($item, $field) || method_exists($item, 'get'. ucfirst($field);
+            return isset($item->$field) || property_exists($item, $field) || method_exists($item, 'get'. ucfirst($field));
         else
             return false;
     }
